@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "firebase-auth-rest-api-py"
+version = "0.1.0"
+description = "An API wrapper for the Firebase Auth REST API."
+authors = ["Justin Chiou <chiou.kai@gmail.com>"]
+readme = "README.md"
+license = "LICENSE.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+httpx = "^0.27.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
