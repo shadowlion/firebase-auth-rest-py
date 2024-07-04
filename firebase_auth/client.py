@@ -22,6 +22,16 @@ class FirebaseAuthClient:
         self._api_key = api_key
 
     def _post_request(self: Self, url: str, request_body: dict) -> dict:
+        """runs an http POST request.
+
+        Args:
+            self (Self): instance of the FirebaseAuthClient.
+            url (str): endpoint url
+            request_body (dict): request payload
+
+        Returns:
+            dict: json response
+        """
         headers = {"Content-Type": "application/json"}
         with httpx.Client() as client:
             r = client.post(url, headers=headers, data=json.dumps(request_body))
@@ -31,6 +41,17 @@ class FirebaseAuthClient:
         self: Self,
         response_data: dict,
     ) -> FirebaseResponseError | None:
+        """Checks to see if the response body conforms to a custom error class.
+        If not, it tells us we can instead conform it to an OK response dataclass.
+
+        Args:
+            self (Self): instance of the FirebaseAuthClient.
+            response_data (dict): json response body
+
+        Returns:
+            FirebaseResponseError | None: error class
+        """
+
         if "error" not in response_data:
             return None
 
@@ -50,6 +71,20 @@ class FirebaseAuthClient:
         email: str,
         password: str,
     ) -> SignUpWithEmailAndPasswordResponse | FirebaseResponseError:
+        """You can create a new email and password user by issuing an HTTP `POST`
+        request to the Auth `signupNewUser` endpoint.
+
+        Reference: https://firebase.google.com/docs/reference/rest/auth/#section-create-email-password
+
+        Args:
+            self (Self): instance of the FirebaseAuthClient.
+            email (str): The email for the user to create.
+            password (str): The password for the user to create.
+
+        Returns:
+            SignUpWithEmailAndPasswordResponse | FirebaseResponseError: response body
+        """
+
         url = f"https://identitytoolkit.googleapis.com/v1/accounts:signUp?key={self._api_key}"
         payload = {
             "email": email,
@@ -68,6 +103,20 @@ class FirebaseAuthClient:
         email: str,
         password: str,
     ) -> SignInWithEmailAndPasswordResponse | FirebaseResponseError:
+        """You can sign in a user with an email and password by issuing an HTTP POST
+        request to the Auth verifyPassword endpoint.
+
+        Reference: https://firebase.google.com/docs/reference/rest/auth/#section-sign-in-email-password
+
+        Args:
+            self (Self): instance of the FirebaseAuthClient.
+            email (str): The email the user is signing in with.
+            password (str): The password for the account.
+
+        Returns:
+            SignInWithEmailAndPasswordResponse | FirebaseResponseError: response body
+        """
+
         url = f"https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key={self._api_key}"
         payload = {
             "email": email,
@@ -84,6 +133,19 @@ class FirebaseAuthClient:
         self: Self,
         email: str,
     ) -> SendPasswordResetEmailResponse | FirebaseResponseError:
+        """You can send a password reset email by issuing an HTTP POST request to the
+        Auth getOobConfirmationCode endpoint.
+
+        Reference: https://firebase.google.com/docs/reference/rest/auth/#section-send-password-reset-email
+
+        Args:
+            self (Self): instance of the FirebaseAuthClient
+            email (str): User's email address.
+
+        Returns:
+            SendPasswordResetEmailResponse | FirebaseResponseError: response body
+        """
+
         url = f"https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key={self._api_key}"
         payload = {
             "email": email,
