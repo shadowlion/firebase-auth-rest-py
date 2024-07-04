@@ -7,6 +7,7 @@ from firebase_auth.responses import (
     FirebaseErrorItem,
     FirebaseErrorMetadata,
     FirebaseResponseError,
+    SendPasswordResetEmailResponse,
     SignInWithEmailAndPasswordResponse,
     SignUpWithEmailAndPasswordResponse,
 )
@@ -78,3 +79,18 @@ class FirebaseAuthClient:
         if err is not None:
             return err
         return SignInWithEmailAndPasswordResponse(**response_body)
+
+    def send_password_reset_email(
+        self: Self,
+        email: str,
+    ) -> SendPasswordResetEmailResponse | FirebaseResponseError:
+        url = f"https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key={self._api_key}"
+        payload = {
+            "email": email,
+            "requestType": "PASSWORD_RESET",
+        }
+        response_body = self._post_request(url, request_body=payload)
+        err = self._parse_firebase_response(response_body)
+        if err is not None:
+            return err
+        return SendPasswordResetEmailResponse(**response_body)

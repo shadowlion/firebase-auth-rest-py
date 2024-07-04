@@ -39,3 +39,8 @@ class SignInWithEmailAndPasswordResponse:
     localId: str
     refreshToken: str
     registered: bool
+
+
+@dataclass
+class SendPasswordResetEmailResponse:
+    email: str
