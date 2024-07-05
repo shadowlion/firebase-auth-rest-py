@@ -1,8 +1,16 @@
 import json
+from dataclasses import asdict
 from typing import Self
 
 import httpx
 
+from firebase_auth.requests import (
+    ConfirmPasswordResetRequest,
+    SendPasswordResetEmailRequest,
+    SignInWithEmailAndPasswordRequest,
+    SignUpWithEmailAndPasswordRequest,
+    VerifyPasswordResetCodeRequest,
+)
 from firebase_auth.responses import (
     ConfirmPasswordResetResponse,
     FirebaseErrorItem,
@@ -70,8 +78,7 @@ class FirebaseAuthClient:
 
     def sign_up_with_email_and_password(
         self: Self,
-        email: str,
-        password: str,
+        req: SignUpWithEmailAndPasswordRequest,
     ) -> SignUpWithEmailAndPasswordResponse | FirebaseResponseError:
         """You can create a new email and password user by issuing an HTTP `POST`
         request to the Auth `signupNewUser` endpoint.
@@ -80,21 +87,14 @@ class FirebaseAuthClient:
 
         Args:
             self (Self): instance of the FirebaseAuthClient.
-            email (str): The email for the user to create.
-            password (str): The password for the user to create.
+            req (SignUpWithEmailAndPasswordRequest): request body payload
 
         Returns:
             SignUpWithEmailAndPasswordResponse | FirebaseResponseError: response body
         """
 
         url = f"https://identitytoolkit.googleapis.com/v1/accounts:signUp?key={self._api_key}"
-        payload = {
-            "email": email,
-            "password": password,
-            "returnSecureToken": True,
-        }
-
-        response_body = self._post_request(url, request_body=payload)
+        response_body = self._post_request(url, request_body=asdict(req))
         err = self._parse_response(response_body)
         if err is not None:
             return err
@@ -102,8 +102,7 @@ class FirebaseAuthClient:
 
     def sign_in_with_email_and_password(
         self: Self,
-        email: str,
-        password: str,
+        req: SignInWithEmailAndPasswordRequest,
     ) -> SignInWithEmailAndPasswordResponse | FirebaseResponseError:
         """You can sign in a user with an email and password by issuing an HTTP POST
         request to the Auth verifyPassword endpoint.
@@ -120,12 +119,7 @@ class FirebaseAuthClient:
         """
 
         url = f"https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key={self._api_key}"
-        payload = {
-            "email": email,
-            "password": password,
-            "returnSecureToken": True,
-        }
-        response_body = self._post_request(url, request_body=payload)
+        response_body = self._post_request(url, request_body=asdict(req))
         err = self._parse_response(response_body)
         if err is not None:
             return err
@@ -133,7 +127,7 @@ class FirebaseAuthClient:
 
     def send_password_reset_email(
         self: Self,
-        email: str,
+        req: SendPasswordResetEmailRequest,
     ) -> SendPasswordResetEmailResponse | FirebaseResponseError:
         """You can send a password reset email by issuing an HTTP POST request to the
         Auth getOobConfirmationCode endpoint.
@@ -149,11 +143,7 @@ class FirebaseAuthClient:
         """
 
         url = f"https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key={self._api_key}"
-        payload = {
-            "email": email,
-            "requestType": "PASSWORD_RESET",
-        }
-        response_body = self._post_request(url, request_body=payload)
+        response_body = self._post_request(url, request_body=asdict(req))
         err = self._parse_response(response_body)
         if err is not None:
             return err
@@ -161,7 +151,7 @@ class FirebaseAuthClient:
 
     def verify_password_reset_code(
         self: Self,
-        oob_code: str,
+        req: VerifyPasswordResetCodeRequest,
     ) -> VerifyPasswordResetCodeResponse | FirebaseResponseError:
         """You can verify a password reset code by issuing an HTTP `POST` request to
         the Auth `resetPassword` endpoint.
@@ -176,10 +166,7 @@ class FirebaseAuthClient:
         """
 
         url = f"https://identitytoolkit.googleapis.com/v1/accounts:resetPassword?key={self._api_key}"
-        payload = {
-            "oobCode": oob_code,
-        }
-        response_body = self._post_request(url, request_body=payload)
+        response_body = self._post_request(url, request_body=asdict(req))
         err = self._parse_response(response_body)
         if err is not None:
             return err
@@ -187,8 +174,7 @@ class FirebaseAuthClient:
 
     def confirm_password_reset(
         self: Self,
-        oob_code: str,
-        new_password: str,
+        req: ConfirmPasswordResetRequest,
     ) -> ConfirmPasswordResetResponse | FirebaseResponseError:
         """You can apply a password reset change by issuing an HTTP `POST` request to
         the Auth `resetPassword` endpoint.
@@ -204,11 +190,7 @@ class FirebaseAuthClient:
         """
 
         url = f"https://identitytoolkit.googleapis.com/v1/accounts:resetPassword?key={self._api_key}"
-        payload = {
-            "oobCode": oob_code,
-            "newPassword": new_password,
-        }
-        response_body = self._post_request(url, request_body=payload)
+        response_body = self._post_request(url, request_body=asdict(req))
         err = self._parse_response(response_body)
         if err is not None:
             return err
