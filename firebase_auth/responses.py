@@ -44,3 +44,9 @@ class SignInWithEmailAndPasswordResponse:
 @dataclass
 class SendPasswordResetEmailResponse:
     email: str
+
+
+@dataclass
+class VerifyPasswordResetCodeResponse:
+    email: str
+    requestType: str

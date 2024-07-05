@@ -10,6 +10,7 @@ from firebase_auth.responses import (
     SendPasswordResetEmailResponse,
     SignInWithEmailAndPasswordResponse,
     SignUpWithEmailAndPasswordResponse,
+    VerifyPasswordResetCodeResponse,
 )
 
 
@@ -156,3 +157,28 @@ class FirebaseAuthClient:
         if err is not None:
             return err
         return SendPasswordResetEmailResponse(**response_body)
+
+    def verify_password_reset_code(
+        self: Self,
+        oob_code: str,
+    ) -> VerifyPasswordResetCodeResponse | FirebaseResponseError:
+        """You can verify a password reset code by issuing an HTTP `POST` request to
+        the Auth `resetPassword` endpoint.
+
+        Args:
+            self (Self): instance of the FirebaseAuthClient
+            oob_code (str): The email action code sent to the user's email for
+            resetting the password.
+
+        Returns:
+            VerifyPasswordResetCodeResponse | FirebaseResponseError: response body
+        """
+        url = f"https://identitytoolkit.googleapis.com/v1/accounts:resetPassword?key={self._api_key}"
+        payload = {
+            "oobCode": oob_code,
+        }
+        response_body = self._post_request(url, request_body=payload)
+        err = self._parse_firebase_response(response_body)
+        if err is not None:
+            return err
+        return VerifyPasswordResetCodeResponse(**response_body)
