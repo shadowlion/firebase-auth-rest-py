@@ -39,7 +39,7 @@ class FirebaseAuthClient:
             r = client.post(url, headers=headers, data=json.dumps(request_body))
             return r.json()
 
-    def _parse_firebase_response(
+    def _parse_response(
         self: Self,
         response_data: dict,
     ) -> FirebaseResponseError | None:
@@ -95,7 +95,7 @@ class FirebaseAuthClient:
         }
 
         response_body = self._post_request(url, request_body=payload)
-        err = self._parse_firebase_response(response_body)
+        err = self._parse_response(response_body)
         if err is not None:
             return err
         return SignUpWithEmailAndPasswordResponse(**response_body)
@@ -126,7 +126,7 @@ class FirebaseAuthClient:
             "returnSecureToken": True,
         }
         response_body = self._post_request(url, request_body=payload)
-        err = self._parse_firebase_response(response_body)
+        err = self._parse_response(response_body)
         if err is not None:
             return err
         return SignInWithEmailAndPasswordResponse(**response_body)
@@ -154,7 +154,7 @@ class FirebaseAuthClient:
             "requestType": "PASSWORD_RESET",
         }
         response_body = self._post_request(url, request_body=payload)
-        err = self._parse_firebase_response(response_body)
+        err = self._parse_response(response_body)
         if err is not None:
             return err
         return SendPasswordResetEmailResponse(**response_body)
@@ -180,7 +180,7 @@ class FirebaseAuthClient:
             "oobCode": oob_code,
         }
         response_body = self._post_request(url, request_body=payload)
-        err = self._parse_firebase_response(response_body)
+        err = self._parse_response(response_body)
         if err is not None:
             return err
         return VerifyPasswordResetCodeResponse(**response_body)
@@ -191,7 +191,7 @@ class FirebaseAuthClient:
         new_password: str,
     ) -> ConfirmPasswordResetResponse | FirebaseResponseError:
         """You can apply a password reset change by issuing an HTTP `POST` request to
-        the Auth resetPassword endpoint.
+        the Auth `resetPassword` endpoint.
 
         Args:
             self (Self): insance of the FirebaseAuthClient
@@ -209,7 +209,7 @@ class FirebaseAuthClient:
             "newPassword": new_password,
         }
         response_body = self._post_request(url, request_body=payload)
-        err = self._parse_firebase_response(response_body)
+        err = self._parse_response(response_body)
         if err is not None:
             return err
         return ConfirmPasswordResetResponse(**response_body)
