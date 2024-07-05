@@ -50,3 +50,9 @@ class SendPasswordResetEmailResponse:
 class VerifyPasswordResetCodeResponse:
     email: str
     requestType: str
+
+
+@dataclass
+class ConfirmPasswordResetResponse:
+    email: str
+    requestType: str

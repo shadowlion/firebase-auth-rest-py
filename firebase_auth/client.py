@@ -4,6 +4,7 @@ from typing import Self
 import httpx
 
 from firebase_auth.responses import (
+    ConfirmPasswordResetResponse,
     FirebaseErrorItem,
     FirebaseErrorMetadata,
     FirebaseResponseError,
@@ -173,6 +174,7 @@ class FirebaseAuthClient:
         Returns:
             VerifyPasswordResetCodeResponse | FirebaseResponseError: response body
         """
+
         url = f"https://identitytoolkit.googleapis.com/v1/accounts:resetPassword?key={self._api_key}"
         payload = {
             "oobCode": oob_code,
@@ -182,3 +184,32 @@ class FirebaseAuthClient:
         if err is not None:
             return err
         return VerifyPasswordResetCodeResponse(**response_body)
+
+    def confirm_password_reset(
+        self: Self,
+        oob_code: str,
+        new_password: str,
+    ) -> ConfirmPasswordResetResponse | FirebaseResponseError:
+        """You can apply a password reset change by issuing an HTTP `POST` request to
+        the Auth resetPassword endpoint.
+
+        Args:
+            self (Self): insance of the FirebaseAuthClient
+            oob_code (str): The email action code sent to the user's email for resetting
+            the password.
+            new_password (str): The user's new password.
+
+        Returns:
+            ConfirmPasswordResetResponse | FirebaseResponseError: response body
+        """
+
+        url = f"https://identitytoolkit.googleapis.com/v1/accounts:resetPassword?key={self._api_key}"
+        payload = {
+            "oobCode": oob_code,
+            "newPassword": new_password,
+        }
+        response_body = self._post_request(url, request_body=payload)
+        err = self._parse_firebase_response(response_body)
+        if err is not None:
+            return err
+        return ConfirmPasswordResetResponse(**response_body)
