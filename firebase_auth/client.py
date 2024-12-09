@@ -4,14 +4,14 @@ from typing import Self
 
 import httpx
 
-from firebase_auth.requests import (
+from .requests import (
     ConfirmPasswordResetRequest,
     SendPasswordResetEmailRequest,
     SignInWithEmailAndPasswordRequest,
     SignUpWithEmailAndPasswordRequest,
     VerifyPasswordResetCodeRequest,
 )
-from firebase_auth.responses import (
+from .responses import (
     ConfirmPasswordResetResponse,
     FirebaseErrorItem,
     FirebaseErrorMetadata,
@@ -42,9 +42,14 @@ class FirebaseAuthClient:
         Returns:
             dict: json response
         """
-        headers = {"Content-Type": "application/json"}
         with httpx.Client() as client:
-            r = client.post(url, headers=headers, data=json.dumps(request_body))
+            r = client.post(
+                url,
+                headers={
+                    "Content-Type": "application/json",
+                },
+                json=json.dumps(request_body),
+            )
             return r.json()
 
     def _parse_response(
